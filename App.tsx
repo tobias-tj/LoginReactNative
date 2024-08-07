@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+import axios from 'axios';
 import React, {useState} from 'react';
 import {
   SafeAreaView,
@@ -7,59 +9,84 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 
 export default function App() {
-  const [form, setForm] = useState({
-    email: '',
-    password: '',
-  });
+  const [usuario, setUsuario] = useState<string>('');
+  const [fcmKey, setFcmKey] = useState<string>('');
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const logoImage = require('./assets/securityNew.png');
+
+  const BASE_URL = 'http://10.0.2.2:5080/api/v1';
+
+  const login = async (usuario: string, fcmKey: string) => {
+    try {
+      console.log(usuario, fcmKey);
+      const response = await axios.post(`${BASE_URL}/Usuario/LoginUsuario`, {
+        usuario,
+        fcmKey,
+      });
+      if (response.status === 200) {
+        Alert.alert('Success', response.data.message);
+        setIsAuthenticated(true);
+      } else {
+        Alert.alert('Error', 'Invalid credentials');
+      }
+    } catch (error) {
+      Alert.alert('Login error', 'Something went wrong');
+      console.error('Login error:', error);
+    }
+  };
+
+  if (isAuthenticated) {
+    return (
+      <SafeAreaView
+        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <Text>Welcome to the Home Screen!</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#e8ecf4'}}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Image source={logoImage} style={styles.headerImg} alt="Logo" />
-          <Text style={styles.title}>Sign in to My App</Text>
+          <Image source={logoImage} style={styles.headerImg} />
+          <Text style={styles.title}>Login App</Text>
           <Text style={styles.subtitle}>
-            Get access to your portfolio and more
+            Ingresar a la app a través del usuario
           </Text>
         </View>
         <View style={styles.form}>
           <View style={styles.input}>
-            <Text style={styles.inputLabel}>Email Address</Text>
-
+            <Text style={styles.inputLabel}>Usuario</Text>
             <TextInput
               autoCapitalize="none"
               autoCorrect={false}
-              keyboardType="email-address"
               style={styles.inputControl}
-              placeholder="ejemplo@gmail.com"
+              placeholder="CI: 54309..."
               placeholderTextColor="#6b7280"
-              value={form.email}
-              onChangeText={email => setForm({...form, email})}
+              value={usuario}
+              onChangeText={text => setUsuario(text)}
             />
           </View>
-
           <View style={styles.input}>
             <Text style={styles.inputLabel}>Password</Text>
-
             <TextInput
               secureTextEntry
               style={styles.inputControl}
               placeholder="*******"
               placeholderTextColor="#6b7280"
-              value={form.password}
-              onChangeText={password => setForm({...form, password})}
+              value={fcmKey}
+              onChangeText={password => setFcmKey(password)}
             />
           </View>
-
           <View style={styles.formAction}>
             <TouchableOpacity
               onPress={() => {
-                //Handle on Press
+                login(usuario, fcmKey);
               }}>
               <View style={styles.btn}>
                 <Text style={styles.btnText}>Sign In</Text>
