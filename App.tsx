@@ -14,21 +14,22 @@ import {
 
 export default function App() {
   const [usuario, setUsuario] = useState<string>('');
-  const [fcmKey, setFcmKey] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const logoImage = require('./assets/securityNew.png');
 
   const BASE_URL = 'http://10.0.2.2:5080/api/v1';
 
-  const login = async (usuario: string, fcmKey: string) => {
+  const login = async (usuario: string, password: string) => {
     try {
-      const response = await axios.post(`${BASE_URL}/Usuario/LoginUsuario`, {
+      const response = await axios.post(`${BASE_URL}/Autenticacion/login`, {
         usuario,
-        fcmKey,
+        password,
       });
       if (response.status === 200) {
         Alert.alert('Success', response.data.message);
+        console.log(response.data);
         setIsAuthenticated(true);
       }
     } catch (error) {
@@ -41,7 +42,7 @@ export default function App() {
     return (
       <SafeAreaView
         style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text>Welcome to the Home Screen!</Text>
+        <Text>Bienvenido a la pantalla de Home!</Text>
       </SafeAreaView>
     );
   }
@@ -76,14 +77,14 @@ export default function App() {
               style={styles.inputControl}
               placeholder="*******"
               placeholderTextColor="#6b7280"
-              value={fcmKey}
-              onChangeText={password => setFcmKey(password)}
+              value={password}
+              onChangeText={password => setPassword(password)}
             />
           </View>
           <View style={styles.formAction}>
             <TouchableOpacity
               onPress={() => {
-                login(usuario, fcmKey);
+                login(usuario, password);
               }}>
               <View style={styles.btn}>
                 <Text style={styles.btnText}>Sign In</Text>
