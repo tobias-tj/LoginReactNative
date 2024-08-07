@@ -23,7 +23,6 @@ export default function App() {
 
   const login = async (usuario: string, fcmKey: string) => {
     try {
-      console.log(usuario, fcmKey);
       const response = await axios.post(`${BASE_URL}/Usuario/LoginUsuario`, {
         usuario,
         fcmKey,
@@ -31,8 +30,6 @@ export default function App() {
       if (response.status === 200) {
         Alert.alert('Success', response.data.message);
         setIsAuthenticated(true);
-      } else {
-        Alert.alert('Error', 'Invalid credentials');
       }
     } catch (error) {
       Alert.alert('Login error', 'Something went wrong');
